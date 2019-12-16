@@ -69,4 +69,4 @@ get_alignment(x1,x2,mat)
 
 We can see the returned alignments are GA--TCCCT- and -ATTTCGATC. 
 
-Anyways, back to trying to study to for my Organic Chemistry exam! Happy finals!
+Anyways, back to trying to study for my Organic Chemistry exam! Happy finals!

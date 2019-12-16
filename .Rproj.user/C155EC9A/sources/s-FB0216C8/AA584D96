@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3453139457",
+    "hash" : "3737906038",
     "id" : "AA584D96",
-    "lastKnownWriteTime" : 1576466196,
-    "last_content_update" : 1576466196876,
+    "lastKnownWriteTime" : 1576466523,
+    "last_content_update" : 1576466523277,
     "path" : "~/website/content/blog/2019-12-15-python-from-class.Rmd",
     "project_path" : "content/blog/2019-12-15-python-from-class.Rmd",
     "properties" : {
-        "cursorPosition" : "71,17",
+        "cursorPosition" : "71,32",
         "scrollLine" : "56"
     },
     "read_only" : false,
