@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="" />
+    <meta name="description" content="A website built through Hugo and blogdown.">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Computational Biology Project 1</title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/about/">ABOUT</a></li>
+        
+        <li><a href="https://github.com/akshab">GITHUB</a></li>
+        
+        <li><a href="https://www.linkedin.com/in/aakansha-bagepally-4512ba152/">LINKEDIN</a></li>
+        
+        <li><a href="https://twitter.com/akshaa_">TWITTER</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">Computational Biology Project 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          October 20, 2019
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="aakansha-bagepally-ab49652" class="section level3">
+<h3>Aakansha Bagepally, ab49652</h3>
+<pre class="r"><code>library(readr)
+grad_students &lt;- read_csv(&quot;Desktop/college-majors/grad-students.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Major = col_character(),
+##   Major_category = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre class="r"><code>library(readr)
+recent_grads &lt;- read_csv(&quot;Desktop/college-majors/recent-grads.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Major = col_character(),
+##   Major_category = col_character()
+## )
+## See spec(...) for full column specifications.</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
+## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
+## ✔ ggplot2 3.2.1     ✔ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ───────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(tidyr)</code></pre>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p><em>These datasets were acquired from preexisting data from FiveThirtyEight’s website. They are fairly similar in the data they contain. “recent_grads” includes data on employment, salaries, majors, and other statistics on recent college graduates. “grad_students” includes data on employment, salaries, majors, and other statistics on graduates from various graduate programs. I found these datasets interesting because I was interested in seeing how much grad school affected overall salary and unemployment rates, as opposed to college grads who had studied the same fields. I expect to see higher salaries associated with lower unemployment rates in graduate students as opposed to recent college grads in the same field.</em></p>
+</div>
+<div id="tidying" class="section level2">
+<h2>Tidying</h2>
+<p>*My data is already pretty tidy, so I am untidying it and tidying it again. Here, I condensed the variables describing the proportions of those students doing full-time work vs. part-time work into one column for recent grads and one column for grad students. Then I reversed it and separated them back out. I also added &quot;_undergrad&quot; to every variable that was unique to recent college grads so I would be able to easily distinguish between variables after I joined them.*</p>
+<pre class="r"><code>recent_grads &lt;- recent_grads%&gt;%pivot_longer(contains(&quot;time&quot;), &quot;time&quot;)
+recent_grads &lt;- recent_grads%&gt;%pivot_wider(names_from = &quot;time&quot;)
+recent_grads &lt;- recent_grads%&gt;%rename_at(vars(-c(1:3, 7)),function(x) paste0(x,&quot;_undergrad&quot;))</code></pre>
+</div>
+<div id="joining" class="section level2">
+<h2>Joining</h2>
+<p><em>I chose an inner join because I wanted to be able to compare statistics between similar undergrad and graduate programs, so only majors that appeared in both datasets were included in the joined dataset.</em></p>
+<pre class="r"><code>employment &lt;- recent_grads %&gt;% inner_join(grad_students)</code></pre>
+<pre><code>## Joining, by = c(&quot;Major_code&quot;, &quot;Major&quot;, &quot;Major_category&quot;)</code></pre>
+</div>
+<div id="summary-statistics-and-dplyr" class="section level2">
+<h2>Summary Statistics and dplyr</h2>
+<p><em>Here, I used mutate to create a variable that described the proportion of women out of the total students in a major. I simply divided the Women_undergrad column by the Total_undergrad column to get this proportion. I then filtered for only those majors that had a proportion of lower than half for and selected only the necessary columns to see which majors had lacking representation. I arranged them from lowest to highest proportions. Interestingly, the lowest proportion was 0.0 in Military Technologies.</em></p>
+<pre class="r"><code>employment %&gt;% mutate(propwomen_undergrad = Women_undergrad/Total_undergrad) %&gt;%
+  filter(propwomen_undergrad&lt;0.5) %&gt;% select(-c(1:2,4:39))%&gt;%
+  arrange(propwomen_undergrad)</code></pre>
+<pre><code>## # A tibble: 76 x 2
+##    Major                                       propwomen_undergrad
+##    &lt;chr&gt;                                                     &lt;dbl&gt;
+##  1 MILITARY TECHNOLOGIES                                    0     
+##  2 MECHANICAL ENGINEERING RELATED TECHNOLOGIES              0.0775
+##  3 CONSTRUCTION SERVICES                                    0.0907
+##  4 MINING AND MINERAL ENGINEERING                           0.102 
+##  5 NAVAL ARCHITECTURE AND MARINE ENGINEERING                0.107 
+##  6 MECHANICAL ENGINEERING                                   0.120 
+##  7 PETROLEUM ENGINEERING                                    0.121 
+##  8 TRANSPORTATION SCIENCES AND TECHNOLOGIES                 0.125 
+##  9 FORESTRY                                                 0.125 
+## 10 AEROSPACE ENGINEERING                                    0.140 
+## # … with 66 more rows</code></pre>
+<p><em>Here, I selected only the columns that described the major category, median salaries for both undergrads and grad students, and unemployment rates for undergrads and grads. These are the variables that I use for most of the rest of the project. I grouped by major category and used summarize to calculate the mean values for each of the numeric variables, arranging by descending mean median salaries for recent college grads. This was so I could get an idea as to how different types of majors stacked up against each other.</em></p>
+<pre class="r"><code>employment %&gt;% select(7,11:12,26:27)%&gt;%group_by(Major_category)%&gt;%
+  summarize(mean_unemployment_undergrad=mean(Unemployment_rate_undergrad),
+            mean_mediansalary_undergrad=mean(Median_undergrad),
+            mean_unemployment_grad= mean(Grad_unemployment_rate),
+            mean_mediansalary_grad = mean(Grad_median)) %&gt;%
+  arrange(desc(mean_mediansalary_undergrad))</code></pre>
+<pre><code>## # A tibble: 16 x 5
+##    Major_category mean_unemployme… mean_mediansala… mean_unemployme…
+##    &lt;chr&gt;                     &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Engineering              0.0633           57383.           0.0393
+##  2 Business                 0.0711           43538.           0.0504
+##  3 Computers &amp; M…           0.0843           42745.           0.0511
+##  4 Law &amp; Public …           0.0908           42200            0.0340
+##  5 Physical Scie…           0.0465           41890            0.0254
+##  6 Social Science           0.0957           37344.           0.0458
+##  7 Agriculture &amp;…           0.0563           36900            0.0333
+##  8 Health                   0.0659           36825            0.0255
+##  9 Biology &amp; Lif…           0.0609           36421.           0.0275
+## 10 Industrial Ar…           0.0481           36343.           0.0672
+## 11 Interdiscipli…           0.0709           35000            0.0201
+## 12 Communication…           0.0755           34500            0.0432
+## 13 Arts                     0.0902           33062.           0.0565
+## 14 Education                0.0517           32350            0.0270
+## 15 Humanities &amp; …           0.0810           31913.           0.0442
+## 16 Psychology &amp; …           0.0721           30100            0.0420
+## # … with 1 more variable: mean_mediansalary_grad &lt;dbl&gt;</code></pre>
+<p><em>I generated summary statistics of min, max, mean, median, 1st quartile and 3rd quartile using summary for median salaries of all recent college grads and all grad students. I also found the standard deviations and the number of distinct values for these variables. Then, I ran correlations with each variable’s respective unemployment rates. Lastly, I created a correlation matrix of all 4 numeric variables (salaries and unemployment rates for both recent grads and grad students).</em>
+<em>I also found the mean, median, min, and max values for all 4 numeric variables again by grouping by the categorical variable of major category using the select, group_by, and summarize_each functions.</em></p>
+<pre class="r"><code>summary(employment$Median_undergrad) </code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   22000   33000   36000   40151   45000  110000</code></pre>
+<pre class="r"><code>sd(employment$Median_undergrad) #sd</code></pre>
+<pre><code>## [1] 11470.18</code></pre>
+<pre class="r"><code>n_distinct(employment$Median_undergrad) #distinct</code></pre>
+<pre><code>## [1] 59</code></pre>
+<pre class="r"><code>cor(employment$Median_undergrad, employment$Unemployment_rate_undergrad) #correlation</code></pre>
+<pre><code>## [1] -0.1088333</code></pre>
+<pre class="r"><code>cor(employment[c(11,12,26,27)])</code></pre>
+<pre><code>##                             Unemployment_rate_undergrad Median_undergrad
+## Unemployment_rate_undergrad                   1.0000000      -0.10883329
+## Median_undergrad                             -0.1088333       1.00000000
+## Grad_unemployment_rate                        0.1955246      -0.09978207
+## Grad_median                                  -0.0443885       0.68666186
+##                             Grad_unemployment_rate Grad_median
+## Unemployment_rate_undergrad             0.19552461  -0.0443885
+## Median_undergrad                       -0.09978207   0.6866619
+## Grad_unemployment_rate                  1.00000000  -0.1388560
+## Grad_median                            -0.13885603   1.0000000</code></pre>
+<pre class="r"><code>summary(employment$Grad_median) #min, 1st quartile, median, mean 3rd quartile, max</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   47000   65000   75000   76756   90000  135000</code></pre>
+<pre class="r"><code>sd(employment$Grad_median) #sd</code></pre>
+<pre><code>## [1] 16912.1</code></pre>
+<pre class="r"><code>n_distinct(employment$Grad_median)</code></pre>
+<pre><code>## [1] 60</code></pre>
+<pre class="r"><code>cor(employment$Grad_median, employment$Grad_unemployment_rate)</code></pre>
+<pre><code>## [1] -0.138856</code></pre>
+<pre class="r"><code>employment %&gt;% select(7,11,12,26,27) %&gt;% group_by(Major_category) %&gt;% 
+  summarize_each(funs(mean))</code></pre>
+<pre><code>## Warning: funs() is soft deprecated as of dplyr 0.8.0
+## Please use a list of either functions or lambdas: 
+## 
+##   # Simple named list: 
+##   list(mean = mean, median = median)
+## 
+##   # Auto named with `tibble::lst()`: 
+##   tibble::lst(mean, median)
+## 
+##   # Using lambdas
+##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+## This warning is displayed once per session.</code></pre>
+<pre><code>## # A tibble: 16 x 5
+##    Major_category Unemployment_ra… Median_undergrad Grad_unemployme… Grad_median
+##    &lt;chr&gt;                     &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Agriculture &amp;…           0.0563           36900            0.0333      69130 
+##  2 Arts                     0.0902           33062.           0.0565      56544.
+##  3 Biology &amp; Lif…           0.0609           36421.           0.0275      83000 
+##  4 Business                 0.0711           43538.           0.0504      84154.
+##  5 Communication…           0.0755           34500            0.0432      63000 
+##  6 Computers &amp; M…           0.0843           42745.           0.0511      85545.
+##  7 Education                0.0517           32350            0.0270      58438.
+##  8 Engineering              0.0633           57383.           0.0393      94328.
+##  9 Health                   0.0659           36825            0.0255      80292.
+## 10 Humanities &amp; …           0.0810           31913.           0.0442      67333.
+## 11 Industrial Ar…           0.0481           36343.           0.0672      66571.
+## 12 Interdiscipli…           0.0709           35000            0.0201      55000 
+## 13 Law &amp; Public …           0.0908           42200            0.0340      76600 
+## 14 Physical Scie…           0.0465           41890            0.0254      88800 
+## 15 Psychology &amp; …           0.0721           30100            0.0420      62456.
+## 16 Social Science           0.0957           37344.           0.0458      76444.</code></pre>
+<pre class="r"><code>employment %&gt;% select(7,11,12,26,27) %&gt;% group_by(Major_category) %&gt;% 
+  summarize_each(funs(median))</code></pre>
+<pre><code>## # A tibble: 16 x 5
+##    Major_category Unemployment_ra… Median_undergrad Grad_unemployme… Grad_median
+##    &lt;chr&gt;                     &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Agriculture &amp;…           0.0553            35000           0.0304       69000
+##  2 Arts                     0.0895            30750           0.0541       57500
+##  3 Biology &amp; Lif…           0.0680            36300           0.0250       85000
+##  4 Business                 0.0697            40000           0.0490       85000
+##  5 Communication…           0.0722            35000           0.0453       62500
+##  6 Computers &amp; M…           0.0908            45000           0.0424       85000
+##  7 Education                0.0488            32750           0.0275       58500
+##  8 Engineering              0.0598            57000           0.0360       98000
+##  9 Health                   0.0643            35000           0.0244       73000
+## 10 Humanities &amp; …           0.0817            32000           0.0421       67000
+## 11 Industrial Ar…           0.0557            35000           0.0545       62000
+## 12 Interdiscipli…           0.0709            35000           0.0201       55000
+## 13 Law &amp; Public …           0.0825            36000           0.0389       75000
+## 14 Physical Scie…           0.0511            39500           0.0270       88000
+## 15 Psychology &amp; …           0.0651            30000           0.0376       64000
+## 16 Social Science           0.0972            38000           0.0453       73000</code></pre>
+<pre class="r"><code>employment %&gt;% select(7,11,12,26,27) %&gt;% group_by(Major_category) %&gt;% 
+  summarize_each(funs(min))</code></pre>
+<pre><code>## # A tibble: 16 x 5
+##    Major_category Unemployment_ra… Median_undergrad Grad_unemployme… Grad_median
+##    &lt;chr&gt;                     &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Agriculture &amp;…          0                  29000          0.0123        54000
+##  2 Arts                    0.0760             27000          0.0384        50750
+##  3 Biology &amp; Lif…          0                  26000          0.0176        58000
+##  4 Business                0.0479             33000          0.0228        65000
+##  5 Communication…          0.0680             33000          0.0306        57000
+##  6 Computers &amp; M…          0                  35000          0.0246        57000
+##  7 Education               0                  22000          0.0142        50000
+##  8 Engineering             0.00633            40000          0.0115        72000
+##  9 Health                  0.0370             28000          0.0143        60000
+## 10 Humanities &amp; …          0.0472             27000          0.0261        48000
+## 11 Industrial Ar…          0                  29000          0.0253        47000
+## 12 Interdiscipli…          0.0709             35000          0.0201        55000
+## 13 Law &amp; Public …          0.0117             35000          0             68000
+## 14 Physical Scie…          0.0212             35000          0.00887       80000
+## 15 Psychology &amp; …          0.0296             23400          0.0256        50000
+## 16 Social Science          0.0731             32000          0.0311        64000</code></pre>
+<pre class="r"><code>employment %&gt;% select(7,11,12,26,27) %&gt;% group_by(Major_category) %&gt;% 
+  summarize_each(funs(max))</code></pre>
+<pre><code>## # A tibble: 16 x 5
+##    Major_category Unemployment_ra… Median_undergrad Grad_unemployme… Grad_median
+##    &lt;chr&gt;                     &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Agriculture &amp;…           0.0969            53000           0.0865       80000
+##  2 Arts                     0.106             50000           0.0965       60000
+##  3 Biology &amp; Lif…           0.0855            45000           0.0453      110000
+##  4 Business                 0.0964            62000           0.0742      110000
+##  5 Communication…           0.0898            35000           0.0516       70000
+##  6 Computers &amp; M…           0.152             53000           0.103       100000
+##  7 Education                0.108             41000           0.0514       65000
+##  8 Engineering              0.177            110000           0.0946      124000
+##  9 Health                   0.112             48000           0.0519      135000
+## 10 Humanities &amp; …           0.107             40000           0.0639       82000
+## 11 Industrial Ar…           0.0727            50000           0.139        90000
+## 12 Interdiscipli…           0.0709            35000           0.0201       55000
+## 13 Law &amp; Public …           0.159             54000           0.0588       89000
+## 14 Physical Scie…           0.0754            62000           0.0378      100000
+## 15 Psychology &amp; …           0.149             40000           0.0611       75000
+## 16 Social Science           0.113             47000           0.0597      100000</code></pre>
+</div>
+<div id="visualizations" class="section level2">
+<h2>Visualizations</h2>
+<p><em>In this plot, I plotted the median salaries of recent college grads against the median salaries of those with graduate degrees, and colored the points by major category. As expected, there appeared to be a positive, linear relationship between the two. So those majors that received higher salaries than other majors with a bachelor’s degree also received higher salaries than other majors with a graduate degree. The data was concentrated on the left side of the graph, and we can see that usually those with graduate degrees had higher salaries than those who had recently finished undergrad.</em></p>
+<pre class="r"><code>library(ggplot2)
+ggplot(employment, aes(Median_undergrad,Grad_median))+
+  geom_point(aes(color=Major_category)) +
+  scale_y_continuous(breaks = seq(0, 140000, 10000)) +
+  scale_x_continuous(breaks = seq(0, 120000, 10000)) +
+  theme(axis.text.x = element_text(angle = 45,hjust = 1))+
+  xlab(&quot;Median Salary for those with Undergrad degrees&quot;) + 
+  ylab(&quot;Median Salary for those with Grad degrees&quot;) +
+  ggtitle(&quot;Median Salaries&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><em>Here, I created a side-by-side bar plot of unemployment rates for those with and without graduate degrees, grouped by their major categories. The unemployment rates for recent college grads were always higher than those with graduate degrees, except in Industrial Arts and Consumer Services majors.</em></p>
+<pre class="r"><code>rates &lt;- gather(employment, Degree, Rate, 11,26)
+ggplot(rates, aes(Major_category, Rate, fill=Degree)) +
+  geom_bar(stat = &quot;summary&quot;,fun.y=&quot;mean&quot;, position = &quot;dodge&quot;) +
+  theme(axis.text.x = element_text(angle = 45,hjust = 1)) +
+  scale_fill_brewer(palette = &quot;Set1&quot;)+
+  xlab(&quot;Major Category&quot;) + ylab(&quot;Average Unemployment Rate&quot;) +
+  ggtitle(&quot;Unemployment Rates after Graduation from Undergrad and Grad&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="clustering" class="section level2">
+<h2>Clustering</h2>
+<p><em>Cluster 1 had the most outliers. The clusters summarized different means and groups of majors that had similar salaries.</em></p>
+<pre class="r"><code>library(cluster)
+salaryrate &lt;- employment[c(11,12,26,27)]
+pam1&lt;-salaryrate%&gt;%pam(k=3)
+pam1</code></pre>
+<pre><code>## Medoids:
+##       ID Unemployment_rate_undergrad Median_undergrad Grad_unemployment_rate
+## [1,]  26                  0.07060957            50000             0.03422950
+## [2,]  66                  0.05253852            40000             0.03169782
+## [3,] 133                  0.05447519            33000             0.03665403
+##      Grad_median
+## [1,]       98000
+## [2,]       80000
+## [3,]       62000
+## Clustering vector:
+##   [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 2 2 1 2 2 1 1 1 2 1 1 1 2 2 3 1 2 1 1
+##  [38] 1 2 2 2 2 2 1 2 2 1 1 1 1 1 2 1 2 1 3 2 2 2 2 1 2 2 3 3 2 2 2 2 2 2 2 2 2
+##  [75] 1 3 2 2 2 2 2 2 1 3 2 2 3 2 3 2 2 3 3 3 3 3 3 2 3 2 3 2 3 3 2 3 2 3 3 3 2
+## [112] 2 3 3 2 3 3 3 3 3 3 1 3 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+## [149] 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3
+## Objective function:
+##    build     swap 
+## 8533.164 8099.978 
+## 
+## Available components:
+##  [1] &quot;medoids&quot;    &quot;id.med&quot;     &quot;clustering&quot; &quot;objective&quot;  &quot;isolation&quot; 
+##  [6] &quot;clusinfo&quot;   &quot;silinfo&quot;    &quot;diss&quot;       &quot;call&quot;       &quot;data&quot;</code></pre>
+<pre class="r"><code>pamclust&lt;-salaryrate%&gt;% mutate(cluster=as.factor(pam1$clustering))
+
+pamclust%&gt;%group_by(cluster)%&gt;%summarize_if(is.numeric,mean,na.rm=T)</code></pre>
+<pre><code>## # A tibble: 3 x 5
+##   cluster Unemployment_rate_und… Median_undergrad Grad_unemployment… Grad_median
+##   &lt;fct&gt;                    &lt;dbl&gt;            &lt;dbl&gt;              &lt;dbl&gt;       &lt;dbl&gt;
+## 1 1                       0.0639           53332.             0.0360     100415.
+## 2 2                       0.0720           41302.             0.0400      80632.
+## 3 3                       0.0678           32539.             0.0406      61877.</code></pre>
+<pre class="r"><code>pamclust %&gt;% ggplot(aes(Median_undergrad,Grad_median,color=cluster))+geom_point()</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

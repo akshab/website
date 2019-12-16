@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="" />
+    <meta name="description" content="A website built through Hugo and blogdown.">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Computational Biology Project 2</title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/about/">ABOUT</a></li>
+        
+        <li><a href="https://github.com/akshab">GITHUB</a></li>
+        
+        <li><a href="https://www.linkedin.com/in/aakansha-bagepally-4512ba152/">LINKEDIN</a></li>
+        
+        <li><a href="https://twitter.com/akshaa_">TWITTER</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project2/">Computational Biology Project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          November 26, 2019
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="aakansha-bagepally-ab49652" class="section level3">
+<h3>Aakansha Bagepally, ab49652</h3>
+<pre class="r"><code>library(readr)
+grad_students &lt;- read_csv(&quot;Desktop/college-majors/grad-students.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Major = col_character(),
+##   Major_category = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre class="r"><code>library(readr)
+recent_grads &lt;- read_csv(&quot;Desktop/college-majors/recent-grads.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Major = col_character(),
+##   Major_category = col_character()
+## )
+## See spec(...) for full column specifications.</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
+## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
+## ✔ ggplot2 3.2.1     ✔ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ───────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
+
+employment&lt;- recent_grads %&gt;% inner_join(grad_students)</code></pre>
+<pre><code>## Joining, by = c(&quot;Major_code&quot;, &quot;Major&quot;, &quot;Major_category&quot;)</code></pre>
+<pre class="r"><code>equalratio &lt;- employment %&gt;% mutate(propwomen_undergrad = Women/Total) 
+equalratio$category[equalratio$propwomen_undergrad&lt;0.6]&lt;- 1</code></pre>
+<pre><code>## Warning: Unknown or uninitialised column: &#39;category&#39;.</code></pre>
+<pre class="r"><code>equalratio$category[equalratio$propwomen_undergrad&gt;=0.6]&lt;- 0
+equalratio$category[equalratio$propwomen_undergrad&lt;0.4]&lt;- 0
+equalratio&lt;- equalratio %&gt;% select(-c(1:2,4:6,8:13,18:25,30:39))</code></pre>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p><em>This dataset were acquired from preexisting data from FiveThirtyEight’s website. It is a merged dataset of recent college grads and grad students statistics including data on employment, salaries, majors, and other statistics. I found the dataset interesting because I was interested in seeing how much grad school affected overall salary and unemployment rates, as opposed to college grads who had studied the same fields. I expect to see higher salaries associated with lower unemployment rates in graduate students as opposed to recent college grads in the same field. The dataset did not have a binary variable so I created one called “propwomen_undergrad” that tells us if there is approxiamtely an equal ratio of men to women in the major, an equal ratio defined as between 0.4 and 0.6 of students being women.</em></p>
+</div>
+<div id="manova" class="section level2">
+<h2>MANOVA</h2>
+<pre class="r"><code>employ1&lt;-equalratio%&gt;%filter(Major_category== &quot;Engineering&quot; | Major_category== &quot;Arts&quot;)
+man1&lt;-manova(cbind(Median, Grad_median, propwomen_undergrad)~Major_category, data=employ1)
+summary(man1)</code></pre>
+<pre><code>##                Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## Major_category  1 0.74889   32.805      3     33 5.129e-10 ***
+## Residuals      35                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary.aov(man1)</code></pre>
+<pre><code>##  Response Median :
+##                Df     Sum Sq    Mean Sq F value    Pr(&gt;F)    
+## Major_category  1 3708707979 3708707979  23.329 2.678e-05 ***
+## Residuals      35 5563980129  158970861                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Grad_median :
+##                Df     Sum Sq    Mean Sq F value    Pr(&gt;F)    
+## Major_category  1 8951552449 8951552449  72.039 5.146e-10 ***
+## Residuals      35 4349095119  124259861                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response propwomen_undergrad :
+##                Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Major_category  1 0.83430 0.83430  69.769 7.525e-10 ***
+## Residuals      35 0.41853 0.01196                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>1-((1-.001)^4)</code></pre>
+<pre><code>## [1] 0.003994004</code></pre>
+<pre class="r"><code>alpha=((.001)/4)
+alpha</code></pre>
+<pre><code>## [1] 0.00025</code></pre>
+<p><em>A one-way multivariate analysis of variance (MANOVA) was conducted to determine the effect of the major category (Engineering or Arts) on three dependent variables (median salary after undergrad, median salary after grad school, and the proportion of students with an undergrad degree that were women). Significant differences were found among the two major categories on the three dependent measures, Pillai trace = 0.75, pseudo F(3, 33) = 32.8, and p &lt; 0.0001.</em></p>
+<p><em>Univariate analyses of variance (ANOVAs) for each dependent variable were conducted as follow-up tests to the MANOVA, using the Bonferroni method for controlling Type I error rates for multiple comparisons. 0.003994004 is the probability of at least one type 1 error occurring with an alpha of .001. Correcting for this, using bonferroni correction, we set our new alpha as 0.00025.The univariate ANOVAs for all three dependent measures, median salary after undergrad, median salary after grad school, and the proportion of students with an undergrad degree that were women, were also significant, F(1,35)=23.329, p&lt;0.00025, F(1,35)=72.039 p&lt;0.00025, and F(1,35)=69.769, p&lt;0.00025, respectively. I did not perform any post-hoc tests because I only tested my categorical variable with two levels. So, 4 tests (1 MANVOA and 3 ANOVAs) were conducted.</em></p>
+<p><em>Assumptions may not have been met strictly, as the observations were not randomly sampled, and there likely was not multivariate normality or equal covariance between DVs.</em></p>
+</div>
+<div id="randomization-test" class="section level2">
+<h2>Randomization Test</h2>
+<pre class="r"><code>employ1%&gt;%group_by(Major_category)%&gt;%summarize(means=mean(propwomen_undergrad))%&gt;%
+  summarize(`mean_diff:`=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean_diff:`
+##          &lt;dbl&gt;
+## 1       -0.365</code></pre>
+<pre class="r"><code>rand_dist&lt;-vector()
+
+for(i in 1:5000){
+  new&lt;-data.frame(prop=sample(employ1$propwomen_undergrad),
+                  condition=employ1$Major_category)
+  rand_dist[i]&lt;-mean(new[new$condition==&quot;Engineering&quot;,]$prop)-
+                mean(new[new$condition==&quot;Arts&quot;,]$prop)}
+
+t.test(data=employ1,propwomen_undergrad~Major_category)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  propwomen_undergrad by Major_category
+## t = 7.083, df = 9.2919, p-value = 4.909e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  0.2488246 0.4807139
+## sample estimates:
+##        mean in group Arts mean in group Engineering 
+##                 0.6036579                 0.2388887</code></pre>
+<p><em>The null hypothesis is that the mean proportion of women within the major category is the same in the Arts as in Engineering majors. The alternate hypothesis is that the mean proportions are different. The t-statistic is 7.083, and the p&lt;.001, so there is a significant difference in the means of proportions of women in the majors in the Arts and in Engineering.</em></p>
+</div>
+<div id="linear-regression" class="section level2">
+<h2>Linear Regression</h2>
+<pre class="r"><code>employ2&lt;- employ1 %&gt;% mutate(Median=Median-mean(Median), 
+                             propwomen_undergrad=propwomen_undergrad-mean(propwomen_undergrad),
+                             Unemployment_rate=Unemployment_rate-mean(Unemployment_rate))
+fit&lt;-lm(Median~propwomen_undergrad + Unemployment_rate, data= employ2)
+fit2&lt;-lm(Median~propwomen_undergrad * Unemployment_rate, data= employ2)
+
+summary(fit2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Median ~ propwomen_undergrad * Unemployment_rate, 
+##     data = employ2)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -26586  -4645    -22   4928  44364 
+## 
+## Coefficients:
+##                                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                             -229.3     2310.0  -0.099 0.921545    
+## propwomen_undergrad                   -58582.1    15694.5  -3.733 0.000714 ***
+## Unemployment_rate                     -20765.9    88637.8  -0.234 0.816217    
+## propwomen_undergrad:Unemployment_rate 113426.2   559463.6   0.203 0.840582    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 12250 on 33 degrees of freedom
+## Multiple R-squared:  0.4657, Adjusted R-squared:  0.4171 
+## F-statistic: 9.588 on 3 and 33 DF,  p-value: 0.0001064</code></pre>
+<pre class="r"><code>ggplot(employ2, aes(x = Unemployment_rate, y = Median)) + geom_point() +
+  geom_smooth(method=&#39;lm&#39;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(employ2, aes(x = propwomen_undergrad, y = Median)) + geom_point() +
+  geom_smooth(method=&#39;lm&#39;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre class="r"><code>resids&lt;-fit2$residuals; fitvals&lt;-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col=&quot;red&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-3.png" width="672" /></p>
+<pre class="r"><code>ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color=&#39;red&#39;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-4.png" width="672" /></p>
+<pre class="r"><code>library(sandwich); library(lmtest)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>bptest(fit2)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  fit2
+## BP = 8.492, df = 3, p-value = 0.03687</code></pre>
+<pre class="r"><code>coeftest(fit2, vcov = vcovHC(fit2))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                                        Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept)                             -229.26    1768.20 -0.1297  0.89763  
+## propwomen_undergrad                   -58582.11   22960.75 -2.5514  0.01555 *
+## Unemployment_rate                     -20765.86   70434.48 -0.2948  0.76997  
+## propwomen_undergrad:Unemployment_rate 113426.15  839410.52  0.1351  0.89333  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Median ~ propwomen_undergrad + Unemployment_rate, 
+##     data = employ2)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -26109  -5185    -88   5372  45075 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          5.309e-13  1.986e+03   0.000    1.000    
+## propwomen_undergrad -5.644e+04  1.146e+04  -4.927 2.13e-05 ***
+## Unemployment_rate   -3.291e+04  6.440e+04  -0.511    0.613    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 12080 on 34 degrees of freedom
+## Multiple R-squared:  0.465,  Adjusted R-squared:  0.4336 
+## F-statistic: 14.78 on 2 and 34 DF,  p-value: 2.407e-05</code></pre>
+<p><em>After mean-centering, the coefficient estimates are -58582.1 for propwomen_undergrad and -20765.9 for Unemployment_rate. So, for dollar increase in Median, there is a 58582.1 in propwomen_undergrad and a 20765.9 for Unemployment_rate. According the plots, the assumptions of linearity, normality, and homoskedasticity appear to have been met. </em></p>
+<p><em>After correcting with robust standard errors, we can see that propwomen_undergrad has a significant effect on Median, while Unemployment_rate does not. 0.4171 of the variation can be explained by the model. Without interactions, the estimates are -5.644e+04 and -3.291e+04 for propwomen_undergrad and Unemployment_rate, respectively.</em></p>
+<pre class="r"><code>samp_distn&lt;-replicate(5000,{
+  boot_dat&lt;-employ2[sample(nrow(employ2),replace=TRUE),]
+  fit3&lt;-lm(Median~propwomen_undergrad + Unemployment_rate,data=boot_dat)
+  coef(fit3)
+})
+samp_distn%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) propwomen_undergrad Unemployment_rate
+## 1    1927.301            10416.81          81616.19</code></pre>
+<p><em>The coefficient estimates after computing bootstrapped standard errors are 10499.53 and 85358.18 for propwomen_undergrad and Unemployment_rate, respectively. These estimates have increased from the estimates with robust SEs.</em></p>
+</div>
+<div id="logistic-regression" class="section level2">
+<h2>Logistic Regression</h2>
+<pre class="r"><code>logfit&lt;-glm(category~Median+Unemployment_rate,data=employ2,family=&quot;binomial&quot;(link=&quot;logit&quot;))
+coeftest(logfit)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                      Estimate  Std. Error z value Pr(&gt;|z|)   
+## (Intercept)       -2.4790e+00  7.5570e-01 -3.2804 0.001036 **
+## Median            -5.5362e-05  4.0159e-05 -1.3786 0.168019   
+## Unemployment_rate  2.9292e+01  1.7238e+01  1.6993 0.089262 . 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>exp(coef(logfit))</code></pre>
+<pre><code>##       (Intercept)            Median Unemployment_rate 
+##      8.382318e-02      9.999446e-01      5.263491e+12</code></pre>
+<p><em>The exponentiated coefficients for Median and Unemployment rate are 9.999446e-01 and 5.263491e+12, respectively. So, if the proportion of women in an undergrad major is between 0.4 and 0.6, there is a 9.999446e-01 increase in median salary and 5.263491e+12 increase in unemployment. However, neither coefficient appears to be a significant predictor.</em></p>
+<pre class="r"><code>predict(logfit, newdata=data.frame(Median=7875.6757, Unemployment_rate=0.022946995),
+        type= &quot;link&quot;)</code></pre>
+<pre><code>##         1 
+## -2.242903</code></pre>
+<pre class="r"><code>predict(logfit, newdata=data.frame(Median=7875.6757, Unemployment_rate=0.022946995),
+        type = &quot;response&quot;)</code></pre>
+<pre><code>##          1 
+## 0.09596337</code></pre>
+<pre class="r"><code>employ2$prob&lt;-predict(logfit,type=&quot;response&quot;)
+employ2$predicted&lt;-ifelse(employ2$prob&gt;.1 &amp; employ2$prob&lt;.4,&quot;equal&quot;,&quot;unequal&quot;)
+
+employ2$logit&lt;-predict(logfit, type = &quot;link&quot;)
+
+table(truth=employ2$category, prediction=employ2$predicted)%&gt;%addmargins</code></pre>
+<pre><code>##      prediction
+## truth equal unequal Sum
+##   0       8      24  32
+##   1       3       2   5
+##   Sum    11      26  37</code></pre>
+<pre class="r"><code>(3+24)/37 #accuracy</code></pre>
+<pre><code>## [1] 0.7297297</code></pre>
+<pre class="r"><code>24/37 #sensitivity, correctly predicted unequal props</code></pre>
+<pre><code>## [1] 0.6486486</code></pre>
+<pre class="r"><code>3/37 #specificity, correctly predicted equal props</code></pre>
+<pre><code>## [1] 0.08108108</code></pre>
+<pre class="r"><code>24/26 #ppv/recall</code></pre>
+<pre><code>## [1] 0.9230769</code></pre>
+<p><em>The accuracy of the model is 0.7297297, the sensitivity is 0.6486486, the specificity is 0.08108108, and the PPV is 0.9230769.</em></p>
+<pre class="r"><code>ggplot(employ2)+geom_density(aes(logit,color=as.factor(category),
+                                 fill=as.factor(category)), alpha=.4) +
+  theme(legend.position=c(.25,.65))+geom_vline(xintercept=-2.2)+
+  xlab(&quot;predictor (logit)&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>sens&lt;-function(p,data=employ2) mean(employ2[employ2$category==1,]$prob&gt;p)
+spec&lt;-function(p,data=employ2) mean(employ2[employ2$category==0,]$prob&lt;p)
+
+sensitivity&lt;-sapply(seq(0,1,.01),sens,employ2)
+specificity&lt;-sapply(seq(0,1,.01),spec,employ2)
+
+ROC1&lt;-data.frame(sensitivity,specificity,cutoff=seq(0,1,.01))
+
+ROC1$TPR&lt;-sensitivity
+ROC1$FPR&lt;-1-specificity
+
+ROC1%&gt;%ggplot(aes(FPR,TPR))+geom_path(size=1.5)+geom_segment(aes(x=0,y=0,xend=1,yend=1),lty=2)+
+  scale_x_continuous(limits = c(0,1))</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<pre class="r"><code>widths&lt;-diff(ROC1$FPR)
+heights&lt;-(ROC1$TPR[-1]+ROC1$TPR[-length(ROC1$TPR)])/2
+AUC&lt;-sum(heights*widths)
+AUC</code></pre>
+<pre><code>## [1] -0.825</code></pre>
+<p><em>Using our ROC curve to calculate AUC, we can say that the probability that a randomly selected Major with an equal gender ratio has a lower prediction than a randomly selected Major with an unequal gender ratio is about 0.825.</em></p>
+<pre class="r"><code>logfit2&lt;-glm(category~Median+Unemployment_rate,data=employ2,family=binomial)
+prob&lt;-predict(logfit2,type=&quot;response&quot;)
+
+class_diag&lt;-function(probs,truth){
+  
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+class_diag(prob,employ2$category)</code></pre>
+<pre><code>##         acc sens spec ppv     auc
+## 1 0.8648649    0    1 NaN 0.81875</code></pre>
+<pre class="r"><code>library(pROC)</code></pre>
+<pre><code>## Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;pROC&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     cov, smooth, var</code></pre>
+<pre class="r"><code>auc(employ2$category, prob)</code></pre>
+<pre><code>## Setting levels: control = 0, case = 1</code></pre>
+<pre><code>## Setting direction: controls &lt; cases</code></pre>
+<pre><code>## Area under the curve: 0.8188</code></pre>
+<pre class="r"><code>set.seed(1234)
+k=10
+
+data1&lt;-employ2[sample(nrow(employ2)),] #randomly order rows
+folds&lt;-cut(seq(1:nrow(employ2)),breaks=k,labels=F) #create folds
+
+diags&lt;-NULL
+for(i in 1:k){
+  train&lt;-data1[folds!=i,]
+  test&lt;-data1[folds==i,]
+  truth&lt;-test$category
+  
+  fits&lt;-glm(category~Median+Unemployment_rate,data=train,family=&quot;binomial&quot;)
+  probs&lt;-predict(fits,newdata = test,type=&quot;response&quot;)
+  
+  #diags&lt;-rbind(diags,class_diag(probs,truth))
+}</code></pre>
+</div>
+<div id="lasso" class="section level2">
+<h2>LASSO</h2>
+<pre class="r"><code>library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 3.0-1</code></pre>
+<pre class="r"><code>y&lt;-as.matrix(employ2$propwomen_undergrad)
+fit5&lt;-glm(propwomen_undergrad~., data=employ2)
+
+x&lt;-model.matrix(fit5)
+cv&lt;-cv.glmnet(x,y)
+lasso&lt;-glmnet(x,y, lambda = cv$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 51 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                                             s0
+## (Intercept)                                       3.072753e-01
+## (Intercept)                                       .           
+## MajorARCHITECTURAL ENGINEERING                    .           
+## MajorARCHITECTURE                                 .           
+## MajorBIOLOGICAL ENGINEERING                       .           
+## MajorBIOMEDICAL ENGINEERING                       .           
+## MajorCHEMICAL ENGINEERING                         .           
+## MajorCIVIL ENGINEERING                            .           
+## MajorCOMMERCIAL ART AND GRAPHIC DESIGN            .           
+## MajorCOMPUTER ENGINEERING                         .           
+## MajorDRAMA AND THEATER ARTS                       .           
+## MajorELECTRICAL ENGINEERING                       .           
+## MajorELECTRICAL ENGINEERING TECHNOLOGY            .           
+## MajorENGINEERING AND INDUSTRIAL MANAGEMENT        .           
+## MajorENGINEERING MECHANICS PHYSICS AND SCIENCE    .           
+## MajorENGINEERING TECHNOLOGIES                     .           
+## MajorENVIRONMENTAL ENGINEERING                    .           
+## MajorFILM VIDEO AND PHOTOGRAPHIC ARTS             .           
+## MajorFINE ARTS                                    .           
+## MajorGENERAL ENGINEERING                          .           
+## MajorGEOLOGICAL AND GEOPHYSICAL ENGINEERING       .           
+## MajorINDUSTRIAL AND MANUFACTURING ENGINEERING     .           
+## MajorINDUSTRIAL PRODUCTION TECHNOLOGIES           .           
+## MajorMATERIALS ENGINEERING AND MATERIALS SCIENCE  .           
+## MajorMATERIALS SCIENCE                            .           
+## MajorMECHANICAL ENGINEERING                       .           
+## MajorMECHANICAL ENGINEERING RELATED TECHNOLOGIES  .           
+## MajorMETALLURGICAL ENGINEERING                    .           
+## MajorMINING AND MINERAL ENGINEERING               .           
+## MajorMISCELLANEOUS ENGINEERING                    .           
+## MajorMISCELLANEOUS ENGINEERING TECHNOLOGIES       .           
+## MajorMISCELLANEOUS FINE ARTS                      .           
+## MajorMUSIC                                        .           
+## MajorNAVAL ARCHITECTURE AND MARINE ENGINEERING    .           
+## MajorNUCLEAR ENGINEERING                          .           
+## MajorPETROLEUM ENGINEERING                        .           
+## MajorSTUDIO ARTS                                  .           
+## MajorVISUAL AND PERFORMING ARTS                   .           
+## Major_categoryEngineering                        -1.419968e-01
+## Unemployment_rate                                 .           
+## Median                                            .           
+## P25th                                             .           
+## P75th                                            -2.083072e-07
+## Grad_unemployment_rate                            .           
+## Grad_median                                      -2.003590e-06
+## Grad_P25                                         -1.635817e-07
+## Grad_P75                                          .           
+## category                                          .           
+## prob                                              .           
+## predictedunequal                                  .           
+## logit                                             .</code></pre>
+<pre class="r"><code>set.seed(1234)
+k=10
+
+data2&lt;-employ2[sample(nrow(employ2)),]
+folds&lt;-cut(seq(1:nrow(employ2)),breaks=k,labels=F)
+
+diags&lt;-NULL
+for(i in 1:k){
+  train&lt;-data2[folds!=i,]
+  test&lt;-data2[folds==i,]
+  truth&lt;-test$propwomen_undergrad
+  
+  fits2&lt;-glm(propwomen_undergrad~Major_category+P75th+Grad_median+Grad_P25,
+             data=train)
+  probs&lt;-predict(fits2,newdata = test,type=&quot;response&quot;)
+  preds&lt;-ifelse(probs&gt;.5,1,0)
+  
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+
+apply(diags,2,mean)</code></pre>
+<pre><code>##   acc  sens  spec   ppv   auc 
+## 0.275 0.000 1.000   NaN 0.500</code></pre>
+<p><em>The retained variables are Major category, 75th percentile of salary for recent grads, median grad salary, and 25th percentile of salary for graduate students.</em></p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

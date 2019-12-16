@@ -1,0 +1,270 @@
+---
+date: "2019-11-26"
+title: "Computational Biology Project 2"
+author: "SDS348 Fall 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Aakansha Bagepally, ab49652
+
+```{R}
+library(readr)
+grad_students <- read_csv("Desktop/college-majors/grad-students.csv")
+library(readr)
+recent_grads <- read_csv("Desktop/college-majors/recent-grads.csv")
+
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+
+employment<- recent_grads %>% inner_join(grad_students)
+
+equalratio <- employment %>% mutate(propwomen_undergrad = Women/Total) 
+equalratio$category[equalratio$propwomen_undergrad<0.6]<- 1
+equalratio$category[equalratio$propwomen_undergrad>=0.6]<- 0
+equalratio$category[equalratio$propwomen_undergrad<0.4]<- 0
+equalratio<- equalratio %>% select(-c(1:2,4:6,8:13,18:25,30:39))
+```
+
+
+## Introduction
+
+*This dataset were acquired from preexisting data from FiveThirtyEight's website. It is a merged dataset of recent college grads and grad students statistics including data on employment, salaries, majors, and other statistics. I found the dataset interesting because I was interested in seeing how much grad school affected overall salary and unemployment rates, as opposed to college grads who had studied the same fields. I expect to see higher salaries associated with lower unemployment rates in graduate students as opposed to recent college grads in the same field. The dataset did not have a binary variable so I created one called "propwomen_undergrad" that tells us if there is approxiamtely an equal ratio of men to women in the major, an equal ratio defined as between 0.4 and 0.6 of students being women.*
+
+
+## MANOVA
+
+```{R}
+employ1<-equalratio%>%filter(Major_category== "Engineering" | Major_category== "Arts")
+man1<-manova(cbind(Median, Grad_median, propwomen_undergrad)~Major_category, data=employ1)
+summary(man1)
+summary.aov(man1)
+1-((1-.001)^4)
+alpha=((.001)/4)
+alpha
+```
+
+*A one-way multivariate analysis of variance (MANOVA) was conducted to determine the effect of the major category (Engineering or Arts) on three dependent variables (median salary after undergrad, median salary after grad school, and the proportion of students with an undergrad degree that were women). Significant differences were found among the two major categories on the three dependent measures, Pillai trace = 0.75, pseudo F(3, 33) = 32.8, and p < 0.0001.*
+
+*Univariate analyses of variance (ANOVAs) for each dependent variable were conducted as follow-up tests to the MANOVA, using the Bonferroni method for controlling Type I error rates for multiple comparisons. 0.003994004 is the probability of at least one type 1 error occurring with an alpha of .001. Correcting for this, using bonferroni correction, we set our new alpha as 0.00025.The univariate ANOVAs for all three dependent measures, median salary after undergrad, median salary after grad school, and the proportion of students with an undergrad degree that were women, were also significant, F(1,35)=23.329, p<0.00025, F(1,35)=72.039 p<0.00025, and F(1,35)=69.769, p<0.00025, respectively. I did not perform any post-hoc tests because I only tested my categorical variable with two levels. So, 4 tests (1 MANVOA and 3 ANOVAs) were conducted.*
+
+*Assumptions may not have been met strictly, as the observations were not randomly sampled, and there likely was not multivariate normality or equal covariance between DVs.*
+
+
+## Randomization Test
+
+```{R}
+employ1%>%group_by(Major_category)%>%summarize(means=mean(propwomen_undergrad))%>%
+  summarize(`mean_diff:`=diff(means))
+
+rand_dist<-vector()
+
+for(i in 1:5000){
+  new<-data.frame(prop=sample(employ1$propwomen_undergrad),
+                  condition=employ1$Major_category)
+  rand_dist[i]<-mean(new[new$condition=="Engineering",]$prop)-
+                mean(new[new$condition=="Arts",]$prop)}
+
+t.test(data=employ1,propwomen_undergrad~Major_category)
+
+```
+
+*The null hypothesis is that the mean proportion of women within the major category is the same in the Arts as in Engineering majors. The alternate hypothesis is that the mean proportions are different. The t-statistic is 7.083, and the p<.001, so there is a significant difference in the means of proportions of women in the majors in the Arts and in Engineering.*
+
+
+## Linear Regression
+
+```{R}
+employ2<- employ1 %>% mutate(Median=Median-mean(Median), 
+                             propwomen_undergrad=propwomen_undergrad-mean(propwomen_undergrad),
+                             Unemployment_rate=Unemployment_rate-mean(Unemployment_rate))
+fit<-lm(Median~propwomen_undergrad + Unemployment_rate, data= employ2)
+fit2<-lm(Median~propwomen_undergrad * Unemployment_rate, data= employ2)
+
+summary(fit2)
+
+ggplot(employ2, aes(x = Unemployment_rate, y = Median)) + geom_point() +
+  geom_smooth(method='lm')
+ggplot(employ2, aes(x = propwomen_undergrad, y = Median)) + geom_point() +
+  geom_smooth(method='lm')
+
+resids<-fit2$residuals; fitvals<-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col="red")
+ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color='red')
+
+library(sandwich); library(lmtest)
+bptest(fit2)
+coeftest(fit2, vcov = vcovHC(fit2))
+
+summary(fit)
+```
+*After mean-centering, the coefficient estimates are -58582.1 for propwomen_undergrad and -20765.9 for Unemployment_rate. So, for dollar increase in Median, there is a 58582.1 in propwomen_undergrad and a 20765.9 for Unemployment_rate. According the plots, the assumptions of linearity, normality, and homoskedasticity appear to have been met. *
+
+*After correcting with robust standard errors, we can see that propwomen_undergrad has a significant effect on Median, while Unemployment_rate does not. 0.4171 of the variation can be explained by the model. Without interactions, the estimates are -5.644e+04 and -3.291e+04 for propwomen_undergrad and Unemployment_rate, respectively.*
+
+```{R}
+samp_distn<-replicate(5000,{
+  boot_dat<-employ2[sample(nrow(employ2),replace=TRUE),]
+  fit3<-lm(Median~propwomen_undergrad + Unemployment_rate,data=boot_dat)
+  coef(fit3)
+})
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+```
+*The coefficient estimates after computing bootstrapped standard errors are 10499.53 and 85358.18 for propwomen_undergrad and Unemployment_rate, respectively. These estimates have increased from the estimates with robust SEs.*
+
+
+## Logistic Regression
+
+```{R}
+logfit<-glm(category~Median+Unemployment_rate,data=employ2,family="binomial"(link="logit"))
+coeftest(logfit)
+exp(coef(logfit))
+```
+
+*The exponentiated coefficients for Median and Unemployment rate are 9.999446e-01 and 5.263491e+12, respectively. So, if the proportion of women in an undergrad major is between 0.4 and 0.6, there is a 9.999446e-01 increase in median salary and 5.263491e+12 increase in unemployment. However, neither coefficient appears to be a significant predictor.*
+
+```{R}
+predict(logfit, newdata=data.frame(Median=7875.6757, Unemployment_rate=0.022946995),
+        type= "link")
+predict(logfit, newdata=data.frame(Median=7875.6757, Unemployment_rate=0.022946995),
+        type = "response")
+
+employ2$prob<-predict(logfit,type="response")
+employ2$predicted<-ifelse(employ2$prob>.1 & employ2$prob<.4,"equal","unequal")
+
+employ2$logit<-predict(logfit, type = "link")
+
+table(truth=employ2$category, prediction=employ2$predicted)%>%addmargins
+(3+24)/37 #accuracy
+24/37 #sensitivity, correctly predicted unequal props
+3/37 #specificity, correctly predicted equal props
+24/26 #ppv/recall
+```
+
+*The accuracy of the model is 0.7297297, the sensitivity is 0.6486486, the specificity is 0.08108108, and the PPV is 0.9230769.*
+
+```{R}
+ggplot(employ2)+geom_density(aes(logit,color=as.factor(category),
+                                 fill=as.factor(category)), alpha=.4) +
+  theme(legend.position=c(.25,.65))+geom_vline(xintercept=-2.2)+
+  xlab("predictor (logit)")
+
+sens<-function(p,data=employ2) mean(employ2[employ2$category==1,]$prob>p)
+spec<-function(p,data=employ2) mean(employ2[employ2$category==0,]$prob<p)
+
+sensitivity<-sapply(seq(0,1,.01),sens,employ2)
+specificity<-sapply(seq(0,1,.01),spec,employ2)
+
+ROC1<-data.frame(sensitivity,specificity,cutoff=seq(0,1,.01))
+
+ROC1$TPR<-sensitivity
+ROC1$FPR<-1-specificity
+
+ROC1%>%ggplot(aes(FPR,TPR))+geom_path(size=1.5)+geom_segment(aes(x=0,y=0,xend=1,yend=1),lty=2)+
+  scale_x_continuous(limits = c(0,1))
+
+widths<-diff(ROC1$FPR)
+heights<-(ROC1$TPR[-1]+ROC1$TPR[-length(ROC1$TPR)])/2
+AUC<-sum(heights*widths)
+AUC
+```
+
+*Using our ROC curve to calculate AUC, we can say that the probability that a randomly selected Major with an equal gender ratio has a lower prediction than a randomly selected Major with an unequal gender ratio is about 0.825.*
+
+```{R}
+logfit2<-glm(category~Median+Unemployment_rate,data=employ2,family=binomial)
+prob<-predict(logfit2,type="response")
+
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+class_diag(prob,employ2$category)
+library(pROC)
+auc(employ2$category, prob)
+
+set.seed(1234)
+k=10
+
+data1<-employ2[sample(nrow(employ2)),] #randomly order rows
+folds<-cut(seq(1:nrow(employ2)),breaks=k,labels=F) #create folds
+
+diags<-NULL
+for(i in 1:k){
+  train<-data1[folds!=i,]
+  test<-data1[folds==i,]
+  truth<-test$category
+  
+  fits<-glm(category~Median+Unemployment_rate,data=train,family="binomial")
+  probs<-predict(fits,newdata = test,type="response")
+  
+  #diags<-rbind(diags,class_diag(probs,truth))
+}
+
+```
+
+
+## LASSO
+
+```{R}
+library(glmnet)
+
+y<-as.matrix(employ2$propwomen_undergrad)
+fit5<-glm(propwomen_undergrad~., data=employ2)
+
+x<-model.matrix(fit5)
+cv<-cv.glmnet(x,y)
+lasso<-glmnet(x,y, lambda = cv$lambda.1se)
+coef(lasso)
+
+set.seed(1234)
+k=10
+
+data2<-employ2[sample(nrow(employ2)),]
+folds<-cut(seq(1:nrow(employ2)),breaks=k,labels=F)
+
+diags<-NULL
+for(i in 1:k){
+  train<-data2[folds!=i,]
+  test<-data2[folds==i,]
+  truth<-test$propwomen_undergrad
+  
+  fits2<-glm(propwomen_undergrad~Major_category+P75th+Grad_median+Grad_P25,
+             data=train)
+  probs<-predict(fits2,newdata = test,type="response")
+  preds<-ifelse(probs>.5,1,0)
+  
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+apply(diags,2,mean)
+```
+
+*The retained variables are Major category, 75th percentile of salary for recent grads, median grad salary, and 25th percentile of salary for graduate students.*
+

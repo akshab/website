@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogs on Aksha Bagepally</title>
+    <link>/blog/</link>
+    <description>Recent content in Blogs on Aksha Bagepally</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Python!</title>
+      <link>/blog/python/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/python/</guid>
+      <description>I’ve seen people use the API for Spotify to analyze their own playlists in Python. People have been able to modify their own Discover Weekly playlists and analyzed their own music taste. I’ve also seen someone compare their music with someone else’s and build a machine learning model to predict who a song was more likely to be listened to by, which I thought was really cool! It’s interesting how easy it is to use APIs with things you may use everyday, like Spotify, social media, games, etc.</description>
+    </item>
+    
+  </channel>
+</rss>

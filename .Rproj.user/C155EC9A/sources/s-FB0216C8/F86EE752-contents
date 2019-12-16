@@ -1,0 +1,146 @@
+---
+title: "Computational Biology Project 1"
+author: "SDS348 Fall 2019"
+date: "10/20/19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Aakansha Bagepally, ab49652
+
+```{R}
+library(readr)
+grad_students <- read_csv("Desktop/college-majors/grad-students.csv")
+library(readr)
+recent_grads <- read_csv("Desktop/college-majors/recent-grads.csv")
+
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+```
+
+## Introduction
+
+*These datasets were acquired from preexisting data from FiveThirtyEight's website. They are fairly similar in the data they contain. "recent_grads" includes data on employment, salaries, majors, and other statistics on recent college graduates. "grad_students" includes data on employment, salaries, majors, and other statistics on graduates from various graduate programs. I found these datasets interesting because I was interested in seeing how much grad school affected overall salary and unemployment rates, as opposed to college grads who had studied the same fields. I expect to see higher salaries associated with lower unemployment rates in graduate students as opposed to recent college grads in the same field.*
+
+
+## Tidying
+
+*My data is already pretty tidy, so I am untidying it and tidying it again. Here, I condensed the variables describing the proportions of those students doing full-time work vs. part-time work into one column for recent grads and one column for grad students. Then I reversed it and separated them back out. I also added "_undergrad" to every variable that was unique to recent college grads so I would be able to easily distinguish between variables after I joined them.*
+
+```{R}
+recent_grads <- recent_grads%>%pivot_longer(contains("time"), "time")
+recent_grads <- recent_grads%>%pivot_wider(names_from = "time")
+recent_grads <- recent_grads%>%rename_at(vars(-c(1:3, 7)),function(x) paste0(x,"_undergrad"))
+```
+
+## Joining
+
+*I chose an inner join because I wanted to be able to compare statistics between similar undergrad and graduate programs, so only majors that appeared in both datasets were included in the joined dataset.*
+
+```{R}
+employment <- recent_grads %>% inner_join(grad_students)
+```
+
+
+## Summary Statistics and dplyr
+
+*Here, I used mutate to create a variable that described the proportion of women out of the total students in a major. I simply divided the Women_undergrad column by the Total_undergrad column to get this proportion. I then filtered for only those majors that had a proportion of lower than half for and selected only the necessary columns to see which majors had lacking representation. I arranged them from lowest to highest proportions. Interestingly, the lowest proportion was 0.0 in Military Technologies.*
+```{R}
+employment %>% mutate(propwomen_undergrad = Women_undergrad/Total_undergrad) %>%
+  filter(propwomen_undergrad<0.5) %>% select(-c(1:2,4:39))%>%
+  arrange(propwomen_undergrad)
+```
+
+
+*Here, I selected only the columns that described the major category, median salaries for both undergrads and grad students, and unemployment rates for undergrads and grads. These are the variables that I use for most of the rest of the project. I grouped by major category and used summarize to calculate the mean values for each of the numeric variables, arranging by descending mean median salaries for recent college grads. This was so I could get an idea as to how different types of majors stacked up against each other.*
+
+```{R}
+employment %>% select(7,11:12,26:27)%>%group_by(Major_category)%>%
+  summarize(mean_unemployment_undergrad=mean(Unemployment_rate_undergrad),
+            mean_mediansalary_undergrad=mean(Median_undergrad),
+            mean_unemployment_grad= mean(Grad_unemployment_rate),
+            mean_mediansalary_grad = mean(Grad_median)) %>%
+  arrange(desc(mean_mediansalary_undergrad))
+```
+
+
+*I generated summary statistics of min, max, mean, median, 1st quartile and 3rd quartile using summary for median salaries of all recent college grads and all grad students. I also found the standard deviations and the number of distinct values for these variables. Then, I ran correlations with each variable's respective unemployment rates. Lastly, I created a correlation matrix of all 4 numeric variables (salaries and unemployment rates for both recent grads and grad students).*
+*I also found the mean, median, min, and max values for all 4 numeric variables again by grouping by the categorical variable of major category using the select, group_by, and summarize_each functions.*
+
+```{R}
+summary(employment$Median_undergrad) 
+sd(employment$Median_undergrad) #sd
+n_distinct(employment$Median_undergrad) #distinct
+cor(employment$Median_undergrad, employment$Unemployment_rate_undergrad) #correlation
+
+cor(employment[c(11,12,26,27)])
+
+summary(employment$Grad_median) #min, 1st quartile, median, mean 3rd quartile, max
+sd(employment$Grad_median) #sd
+n_distinct(employment$Grad_median)
+cor(employment$Grad_median, employment$Grad_unemployment_rate)
+
+employment %>% select(7,11,12,26,27) %>% group_by(Major_category) %>% 
+  summarize_each(funs(mean))
+employment %>% select(7,11,12,26,27) %>% group_by(Major_category) %>% 
+  summarize_each(funs(median))
+employment %>% select(7,11,12,26,27) %>% group_by(Major_category) %>% 
+  summarize_each(funs(min))
+employment %>% select(7,11,12,26,27) %>% group_by(Major_category) %>% 
+  summarize_each(funs(max))
+```
+
+
+## Visualizations
+
+*In this plot, I plotted the median salaries of recent college grads against the median salaries of those with graduate degrees, and colored the points by major category. As expected, there appeared to be a positive, linear relationship between the two. So those majors that received higher salaries than other majors with a bachelor's degree also received higher salaries than other majors with a graduate degree. The data was concentrated on the left side of the graph, and we can see that usually those with graduate degrees had higher salaries than those who had recently finished undergrad.*
+
+```{R}
+library(ggplot2)
+ggplot(employment, aes(Median_undergrad,Grad_median))+
+  geom_point(aes(color=Major_category)) +
+  scale_y_continuous(breaks = seq(0, 140000, 10000)) +
+  scale_x_continuous(breaks = seq(0, 120000, 10000)) +
+  theme(axis.text.x = element_text(angle = 45,hjust = 1))+
+  xlab("Median Salary for those with Undergrad degrees") + 
+  ylab("Median Salary for those with Grad degrees") +
+  ggtitle("Median Salaries")
+```
+
+
+*Here, I created a side-by-side bar plot of unemployment rates for those with and without graduate degrees, grouped by their major categories. The unemployment rates for recent college grads were always higher than those with graduate degrees, except in Industrial Arts and Consumer Services majors.*
+
+```{R}
+rates <- gather(employment, Degree, Rate, 11,26)
+ggplot(rates, aes(Major_category, Rate, fill=Degree)) +
+  geom_bar(stat = "summary",fun.y="mean", position = "dodge") +
+  theme(axis.text.x = element_text(angle = 45,hjust = 1)) +
+  scale_fill_brewer(palette = "Set1")+
+  xlab("Major Category") + ylab("Average Unemployment Rate") +
+  ggtitle("Unemployment Rates after Graduation from Undergrad and Grad")
+```
+
+
+## Clustering
+
+*Cluster 1 had the most outliers. The clusters summarized different means and groups of majors that had similar salaries.*
+
+```{R}
+library(cluster)
+salaryrate <- employment[c(11,12,26,27)]
+pam1<-salaryrate%>%pam(k=3)
+pam1
+
+pamclust<-salaryrate%>% mutate(cluster=as.factor(pam1$clustering))
+
+pamclust%>%group_by(cluster)%>%summarize_if(is.numeric,mean,na.rm=T)
+
+pamclust %>% ggplot(aes(Median_undergrad,Grad_median,color=cluster))+geom_point()
+
+```
+
+

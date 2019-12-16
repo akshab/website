@@ -1,0 +1,21 @@
+{{ partial "head" . }}
+  <body>
+    <div id="wrap">
+      {{ partial "header" . }}
+      <section id="about">
+        <div class="container">
+        <div class="avatar">
+          <img class="img-circle" src="{{ .Site.BaseURL }}img/me.png{{ .Site.Params.avatar }}" alt="Me!" height=150px width=150px>
+        </div>
+        <h3>Hi! <strong>{{ .Site.Params.author }}</strong> I'm Aakansha Bagepally, a student at the University of Texas at Austin.</h3>
+        <h3>I'm a Biology Honors and Government double major pursuing an Evidence and Inquiry Certificate and Asian American Studies minor.</h3>
+        <h3>Have a look at some of my working <a href="{{ .Site.BaseURL }}projects/"> projects</a>.</h3>
+        <h3>For more, check out my academic &amp; professional <a href="/AkshaBagepallyResume.pdf">resume</a>.</h3>
+        <h3>Contact me at <a href="http://twitter.com/akshaa_{{ .Site.Params.Social.Twitter }}">@akshaa_{{ .Site.Params.Social.Twitter }}</a> or by <a href="mailto:av.bagepally@utexas.edu{{ .Site.Params.Social.Email }}">email</a>.</h3>
+        {{ partial "social.html" . }}
+        </div>
+      </section>
+    </div>
+    {{ partial "footer" . }}
+  </body>
+</html>
