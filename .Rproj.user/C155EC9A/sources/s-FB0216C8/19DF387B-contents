@@ -1,0 +1,10 @@
+---
+title: Python Extra!
+author: Aakansha Bagepally
+date: '2019-12-15'
+slug: python
+categories: []
+tags: []
+description: ''
+---
+I've seen people use the API for Spotify to analyze their own playlists in Python. People have been able to modify their own Discover Weekly playlists and analyzed their own music taste. I've also seen someone compare their music with someone else's and build a machine learning model to predict who a song was more likely to be listened to by, which I thought was really cool! It's interesting how easy it is to use APIs with things you may use everyday, like Spotify, social media, games, etc. and analyze your own habits and activites.
