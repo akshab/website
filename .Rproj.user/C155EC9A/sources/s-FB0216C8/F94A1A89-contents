@@ -1,0 +1,17 @@
+{{ partial "head" . }}
+  <body>
+    <div id="wrap">
+      {{ partial "header" . }}
+      <section id="about">
+        <div class="container">
+        <div class="avatar">
+        </div>
+        <h3>Hello! <strong>{{ .Site.Params.author }}</strong> My name is Aakansha Bagepally, and I am currently a third-year student pursuing an Honors B.S.A in Biology and a B.A in Government as a double major at the University of Texas at Austin, with a minor in Asian American Studies. I am in the Polymathic Scholars Honors Program, an interdisciplinary honors program for students in the College of Natural Sciences that includes an Evidence and Inquiry Certificate. As part of this program, I will be writing an honors thesis based on the reproductive health within immigrant communities in the US.</h3>
+    <h3>Here is my full <a href="/AkshaBagepallyResume.pdf">resume</a>. Check it out!</h3>
+        {{ partial "social.html" . }}
+        </div>
+      </section>
+    </div>
+    {{ partial "footer" . }}
+  </body>
+</html>

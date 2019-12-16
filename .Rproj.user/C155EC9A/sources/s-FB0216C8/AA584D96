@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576465469094.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "607221609",
+    "id" : "AA584D96",
+    "lastKnownWriteTime" : 1576465484,
+    "last_content_update" : 1576465484171,
+    "path" : "~/website/content/blog/2019-12-15-python-from-class.Rmd",
+    "project_path" : "content/blog/2019-12-15-python-from-class.Rmd",
+    "properties" : {
+        "cursorPosition" : "1,14",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

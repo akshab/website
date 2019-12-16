@@ -12,12 +12,21 @@
     
     
     <item>
-      <title>Python!</title>
+      <title>Python Extra!</title>
       <link>/blog/python/</link>
       <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
       
       <guid>/blog/python/</guid>
       <description>I’ve seen people use the API for Spotify to analyze their own playlists in Python. People have been able to modify their own Discover Weekly playlists and analyzed their own music taste. I’ve also seen someone compare their music with someone else’s and build a machine learning model to predict who a song was more likely to be listened to by, which I thought was really cool! It’s interesting how easy it is to use APIs with things you may use everyday, like Spotify, social media, games, etc.</description>
+    </item>
+    
+    <item>
+      <title>Python!</title>
+      <link>/blog/python-from-class/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/python-from-class/</guid>
+      <description>I thought the Needleman-Wunsch algorithms were interesting to learn about, since I had never heard of them. It makes sense that something like this would exist, even if only for testing amino acids/base pair similarity/alignments. Honestly, it was kind of fun to fill in the alignment matrix by hand. But obviously, this becomes very tedious when you have really long sequences, so being able to do it in Python was very helpful.</description>
     </item>
     
   </channel>

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1576465065276.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3070621565",
+    "id" : "93172A72",
+    "lastKnownWriteTime" : 1576465344,
+    "last_content_update" : 1576465344489,
+    "path" : "~/website/content/resume.Rmd",
+    "project_path" : "content/resume.Rmd",
+    "properties" : {
+        "cursorPosition" : "6,659",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
